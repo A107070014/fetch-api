@@ -36,3 +36,10 @@
     transform: rotate(360deg);
   }
 }
+$text: red;
+
+.app {
+  & .app_link {
+    color: $text;
+  }
+}
