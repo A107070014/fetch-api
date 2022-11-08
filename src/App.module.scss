@@ -1,5 +1,29 @@
 @import 'variables.scss';
 
 .block {
-  
+  &_row {
+    display: flex;
+
+    &:nth-child(1) {
+        flex-wrap: wrap;
+
+        & .block_col {
+            margin: 10px;
+        }
+    }
+  }
+
+  &_col {
+    border: 1px solid red;
+  }
+
+  &_img {
+    width: 200px;
+    height: 200px;
+    border-radius: 5px;
+  }
+
+  &_animal {
+
+  }
 }

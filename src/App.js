@@ -1,11 +1,17 @@
+import React from "react";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import styles from './App.module.scss';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+
 
 function App() {
   const [allData, setAllData] = useState([]);
   const [data, setData] = useState([]);
   const [number, setNumber] = useState(10);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const _fetchData = async () => {
       const resAllData = await axios
@@ -17,13 +23,13 @@ function App() {
           console.log(res);
         })
       setAllData(resAllData);
+      setLoading(false);
     }
     _fetchData();
   }, [])
 
   console.log(allData);
 
-  // 跟上面的useEffect同時執行，第一次allData為[]
   useEffect(() => {
     function _loadingNewData() {
       console.log("_loadingNewData()");
@@ -33,19 +39,39 @@ function App() {
       setData(newLoadingData);
     }
     _loadingNewData();
-  }, [number])
-  
-  
+  }, [number, loading]) // 跟上面的useEffect會同時執行，因此第一次allData為[]，需在dependencies加上loading，再執行一次此useEffect
+
+
 
   return (
     <div className={styles.block}>
-      <div onClick={()=> setNumber(preNumber => preNumber + 10)}>click</div>
-      {data.map((item, index) =>
-        <div>
-          <img src={item.album_file} key={index} alt="動物圖片" />
-          <div>{index} {item.animal_Variety}</div>
-        </div>
-      )}
+      {loading && <div className={styles.block_row}>loading</div>}
+      <div className={styles.block_row}>
+        {data.map((item, index) =>
+          <div className={styles.block_col}>
+            {item.album_file ?
+              <img className={styles.block_img} src={item.album_file} key={index} alt="動物圖片" /> : 
+              <FontAwesomeIcon 
+                className={styles.block_img} 
+                icon={
+                  item.animal_kind == '狗' ? ['fas', 'dog'] : 
+                  item.animal_kind == '貓' ? ['fas', 'cat'] : ['fas', 'paw-simple']
+                } 
+              /> 
+            }
+            <div className={styles.block_animal}>
+              <div>序號：{index + 1}</div>
+              <div>品種：{item.animal_Variety}</div>
+              <div>類別：{item.animal_kind}</div>
+              <div>性別：{item.animal_sex === 'M' ? '男' : '女'}</div>
+              <div>收容所：{item.shelter_name}</div>
+              <div>發現地點：{item.animal_foundplace}</div>
+              <div>建立時間：{item.animal_createtime}</div>
+            </div>
+          </div>
+        )}
+      </div>
+      <div className={styles.block_row} onClick={() => setNumber(preNumber => preNumber + 10)}>click</div>
     </div>
   );
 }
