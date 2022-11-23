@@ -37,33 +37,31 @@ function App() {
     }
     _loadingNewData();
   }, [number, loading]) // 跟上面的useEffect會同時執行，因此第一次allData為[]，需在dependencies加上loading，再執行一次此useEffect
-  const options = {
-    threshold: 1, //設定目標元素的可見度達到多少比例時，觸發 callback 函式
-  }
-
-  const callback = (entries, observer) => {
-    // entries 能拿到所有目標元素進出(intersect)變化的資訊
-    entries.forEach(entry => {
-      console.log(entry.isIntersecting);
-      if (entry.isIntersecting) {
-        //  只在目標元素進入 viewport 時執行這裡的工作
-        setNumber(preNumber => preNumber + 10);
-        // observer.unobserve(targetRef.current);
-      } else {
-        // 只在目標元素離開 viewport 時執行這裡的工作
-      }
-    })
-  }
 
   useEffect(() => {
-    const observer = new IntersectionObserver(callback, options);
+    // const options = {
+    //   threshold: 1, //設定目標元素的可見度達到多少比例時，觸發 callback 函式
+    // }
+    const callback = (entries, observer) => {
+      // entries 能拿到所有目標元素進出(intersect)變化的資訊
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          //  只在目標元素進入 viewport 時執行這裡的工作
+          setNumber(preNumber => preNumber + 10);
+        }
+      })
+    }
+
+    const observer = new IntersectionObserver(callback, { threshold: 1 });
 
     // 設定觀察對象：告訴 observer 要觀察哪個目標元素
     if (targetRef.current) observer.observe(targetRef.current);
-  }, [targetRef, options])
 
-  console.log(allData);
-  console.log(targetRef);
+    //很重要!!!不會re-render
+    return () => {
+      observer.disconnect(targetRef.current); // *** Use the same element
+    }
+  }, [targetRef.current])
   console.log(number);
 
   return (
@@ -71,7 +69,7 @@ function App() {
       {loading && <div className={styles.block_row}>loading</div>}
       <div className={styles.block_row}>
         {data.map((item, index) =>
-          <div className={styles.block_col} ref={targetRef}>
+          <div className={styles.block_col}>
             {item.album_file ?
               <img className={styles.block_img} src={item.album_file} key={index} alt="動物圖片" /> :
               item.animal_kind === '狗' ? <FaDog className={styles.block_img} /> :
@@ -88,6 +86,7 @@ function App() {
             </div>
           </div>
         )}
+        {!loading && <div ref={targetRef}></div>}
       </div>
     </div>
   );
