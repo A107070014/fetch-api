@@ -1,29 +1,32 @@
-@import 'variables.scss';
+@import "variables.scss";
 
 .block {
   &_row {
     display: flex;
 
     &:nth-child(1) {
-        flex-wrap: wrap;
+      flex-wrap: wrap;
 
-        & .block_col {
-            margin: 10px;
-        }
+      & .block_col {
+        margin: 10px;
+      }
     }
   }
 
   &_col {
-    border: 1px solid red;
+    width: 250px;
+    background: rgb(235, 235, 235);
+    border-radius: 5px;
+    padding: 5px;
   }
 
   &_img {
-    width: 200px;
+    width: 100%;
     height: 200px;
     border-radius: 5px;
   }
 
-  &_animal {
-
+  &_info {
+    line-height: 24px;
   }
 }

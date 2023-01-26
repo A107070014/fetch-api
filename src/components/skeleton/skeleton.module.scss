@@ -1,0 +1,13 @@
+.block {
+  &_row {
+    display: flex;
+
+    &:nth-child(1) {
+      flex-wrap: wrap;
+
+      & .block_col {
+        margin: 10px;
+      }
+    }
+  }
+}
